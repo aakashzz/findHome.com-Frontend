@@ -1,101 +1,84 @@
-import Image from "next/image";
+"use client"
+import HomeCard from "@/components/HomeCard";
+import TrendingProperties from "@/components/TreadingProperties";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
+  const [searchText,setSearchText] = useState<string>("")
+    const topRatedHomes = [
+        {
+          id: 1,
+          title: "Charming Parisian Apartment",
+          location: "Paris, France",
+          price: 4200,
+          rating: 4.9,
+          image: "https://images.unsplash.com/photo-1524431144429-03fdd30eee26?q=80&w=1988&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        },
+        {
+          id: 2,
+          title: "Tropical Island Bungalow",
+          location: "Bali, Indonesia",
+          price: 1800,
+          rating: 4.6,
+          image: "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        },
+        {
+          id: 3,
+          title: "Historic City Center Flat",
+          location: "Rome, Italy",
+          price: 3800,
+          rating: 4.8,
+          image: "https://images.unsplash.com/photo-1544397838-37a35169ebf0?q=80&w=1772&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        }
+      ]
+    
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-be-vietnam-pro">
+      
+      <header className="relative bg-cover bg-center h-[550px]" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1721149122657-7b5440f39160?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/80"></div>
+        <div className="relative container mx-auto px-4 h-full flex flex-col justify-center items-center text-center text-white">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fadeIn font-beVietnamPro">Find Your Perfect Home</h1>
+          <p className="text-lg sm:max-w-xl sm:mx-auto  mb-8 animate-fadeIn animate-delay-100 font-inter">Discover the best rental properties at unbeatable prices. Connect directly with property owners and find your ideal home today.</p>
+          <div className="w-full max-w-2xl mx-auto relative animate-fadeIn animate-delay-200">
+            <Input 
+              type="text"
+              value={searchText}
+              onChange={(e)=>setSearchText(e.target.value) }
+              placeholder="Search for a location..."
+              className="w-full pl-10 pr-4 py-5 font-inter font-medium bg-white rounded-full text-gray-800 border-none focus:ring-2 focus:ring-purple-400"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={24} />
+            <Link href={`/search?q=${searchText}`}>
+            <Button type="submit"  className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white font-inter">
+              Search
+            </Button>
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </header>
+
+      <TrendingProperties />
+
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Top Rated Homes</h2>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {topRatedHomes.map((home) => (
+              <HomeCard key={home.id} home={home} />
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
+              View All Properties
+            </Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
