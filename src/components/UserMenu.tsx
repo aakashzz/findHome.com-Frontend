@@ -16,6 +16,7 @@ import { logoutUserAccount } from "@/lib/api/authenticate.user";
 import { toast } from "sonner";
 import { useCustomDispatch } from "@/store/hooks";
 import { logout } from "@/store/slice/user.slice";
+import Link from "next/link";
 
 export interface UserMenuProps {
   user: {
@@ -73,7 +74,7 @@ function UserMenu({ user, className }: UserMenuProps) {
                {user.role === "Owner" ? (
             <>
               <Home className="mr-2 h-4 w-4" />
-              <span>My Properties</span>
+              <Link href={`/owner/list-home`}>My Properties</Link>
             </>
           ) : (
             <>

@@ -40,7 +40,7 @@ function SearchResult({
          >
             <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row">
                <div className="sm:w-1/3 cursor-pointer">
-               <Link href={`/v2/${id}`}>
+               <Link href={`/v2/home/${id}`}>
                   <img
                      src={thumbnail}
                      alt={propertyType}

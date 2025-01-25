@@ -10,7 +10,7 @@ const config = {
  type BookingType = {
    homeId : string,
    customerId: string,
-   booking_date: Date,
+   booking_date: number,
  }
 
 
@@ -28,10 +28,10 @@ export const fetchHouseDetails = async (id: string) => {
 }
 
 export const confirmBookingHouse = async (data: BookingType)=>{
-   if(!data){
-      return "Data Not Here.... Confirm Booking"
-   }
    try {
+      if(!data){
+         return "Data Not Here.... Confirm Booking"
+      }
          const resultOfConfirmBooking = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/booking/create`,data,config);
          if(!resultOfConfirmBooking){
             return "Api Error Please Check"

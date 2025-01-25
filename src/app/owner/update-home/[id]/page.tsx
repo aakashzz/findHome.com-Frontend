@@ -30,9 +30,10 @@ function page() {
       {
         homeData ? 
         <HomeForm HomeData={homeData}/>
-        : <>
-          Loading.....
-        </>
+            : 
+            <>
+                Loading.....
+            </>
       }
     </div>
   )

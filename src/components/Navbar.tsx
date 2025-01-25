@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useLayoutEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserMenu from "./UserMenu";
@@ -34,12 +34,13 @@ const Navbar: React.FC = () => {
       dispatch(fetchCurrentUser());
    }
 
+  
    useEffect(() => {
       if (!data && status !== "success") {
          setIsLoggedIn(false);
       }
       setIsLoggedIn(true);
-   }, [isLoggedIn]);
+   }, [isLoggedIn,data]);
    // setIsLoggedIn(true)
    const navbarOption: Array<NavbarType> = [
       {

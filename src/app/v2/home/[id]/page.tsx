@@ -52,7 +52,7 @@ const relatedHouses: any = [
 ];
 const HouseDetail: React.FC<HouseSchema> = () => {
    const [houseDetails, setHouseDetails] = useState<HouseSchema>();
-   const userRole = useCustomSelector(state =>  state.getUser?.data?.role)
+   const userRole = useCustomSelector(state => state.getUser?.data?.role)
    const { id } = useParams();
    const router = useRouter();
    const relatedHouses: any = [
@@ -127,7 +127,7 @@ const HouseDetail: React.FC<HouseSchema> = () => {
 
    return (
       <div className="container mx-auto px-4 py-4 bg-gray-50 min-h-screen">
-         { houseDetails ? (
+         {houseDetails ? (
             <>
                <div className="container mx-auto px-4 py-8">
                   <div className="max-w-5xl mx-auto">
@@ -303,7 +303,7 @@ const HouseDetail: React.FC<HouseSchema> = () => {
                               </TabsContent>
                            </Tabs>
                         </div>
-                       
+
                         <div>
                            <Card>
                               <CardHeader>
@@ -314,26 +314,25 @@ const HouseDetail: React.FC<HouseSchema> = () => {
                                     ${houseDetails.rent_price}/month
                                  </div>
                                  {
-                           userRole === "Customer" ?
-                                 <Button
-                                    onClick={confirmBookingMethod}
-                                    className="w-full mb-4"
-                                 >
-                                    Booking Now
-                                 </Button>
-                                 : <>  <div className=" md:text-sm font-medium mb-2 mt-4">
-                                 # Update House Details
-                              </div>
-                                  <Button
-                                 onClick={confirmBookingMethod}
-                                 className="w-full mb-4 bg-[#1DBE30] hover:bg-[#1DBE80]"
-                              >
-                                 <Link href={`/owner/update-home/${id}`}>
-                                    Update Details
-                                 </Link>
-                              </Button>
-                              </>
-                        }
+                                    userRole === "Customer" ?
+                                       <Button
+                                          onClick={confirmBookingMethod}
+                                          className="w-full mb-4"
+                                       >
+                                          Booking Now
+                                       </Button>
+                                       : <>  <div className=" md:text-sm font-medium mb-2 mt-4">
+                                          # Update House Details
+                                       </div>
+                                          <Button
+                                             className="w-full mb-4 bg-[#1DBE30] hover:bg-[#1DBE80]"
+                                          >
+                                             <Link href={`/owner/update-home/${id}`}>
+                                                Update Details
+                                             </Link>
+                                          </Button>
+                                       </>
+                                 }
                                  <div className="flex items-center justify-between text-sm text-gray-500">
                                     <span>Listed by</span>
                                     <span>{houseDetails.user?.name}</span>

@@ -23,15 +23,11 @@ import {
    CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { X, Plus, Upload, ImageIcon } from "lucide-react";
+import { Upload, ImageIcon } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { addOwnerNewHome, updateHouseImage, UpdateImage, updateOneHomeDetails } from "@/lib/api/owner.home";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import {  useRouter } from "next/navigation";
+import { addOwnerNewHome } from "@/lib/api/owner.home";
 
 const schema = z.object({
-   id: z.string().uuid().optional(),
    thumbnail: z.instanceof(File).optional(),
    imagesOfHome: z.array(z.instanceof(File)).optional(),
    status: z.enum(["Available", "Rented"]),
@@ -66,12 +62,12 @@ interface HomeFormProps {
 }
 
 const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
-   const router = useRouter()
+   console.log("Data", HomeData);
    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
-      null
+      typeof HomeData?.thumbnail === "string" ? HomeData?.thumbnail : null
    );
    const [imagesPreview, setImagesPreview] = useState<string[]>([]);
-   const { id } = useParams()
+
    const {
       register,
       handleSubmit,
@@ -81,7 +77,7 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
    } = useForm<HomeFormData>({
       resolver: zodResolver(schema),
       defaultValues: {
-         id: id as string || undefined,
+         imagesOfHome: HomeData?.imagesOfHome || [],
          status: HomeData?.status || undefined,
          state: HomeData?.state || "",
          rent_price: HomeData?.rent_price || undefined,
@@ -89,6 +85,7 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
          propertyType: HomeData?.propertyType || undefined,
          pincode: HomeData?.pincode || undefined,
          description: HomeData?.description || undefined,
+         additionalFields: HomeData?.additionalFields || undefined,
          address: HomeData?.address || undefined,
          BHK: HomeData?.BHK || undefined,
          city: HomeData?.city || undefined,
@@ -104,33 +101,10 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
    const onSubmit: SubmitHandler<HomeFormData> = async (data: HomeFormData) => {
       try {
          if (HomeData) {
-            console.log("Data ", data)
-            if (data.thumbnail || data.imagesOfHome) {
-               const formData = new FormData();
-               formData.append("houseId", id as string);
-               formData.append("thumbnail", data.thumbnail ? data.thumbnail : '');
-
-               if (data.imagesOfHome && Array.isArray(data.imagesOfHome)) {
-                  data.imagesOfHome.forEach((file) => {
-                     formData.append("imagesOfHome", file);
-                  });
-               }
-
-               const updateImage = await updateHouseImage(formData as unknown as UpdateImage)
-               if (!updateImage) {
-                  toast.error("Sorry Images Not Update Try again")
-               }
-               toast.success("Images Are Update Successfully")
-            }
-
-            const updateData = await updateOneHomeDetails(data);
-            if (!updateData) {
-               toast.error("Data Not Update Try Again")
-            }
-            toast.success("Data Update Successfully")
-
+            // images Data comparing for same data not submit
+            // all compare pervious data to current submitted data
+            // add data different that uploading
          } else {
-
             const formData = new FormData();
             console.log("Thumbnail Reo", data);
 
@@ -163,10 +137,6 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
                formData as unknown as HomeFormData
             );
             console.log(result);
-            if(result){
-               return router.push(`/v2/home/${result?.id}`)
-            }
-
          }
       } catch (error) {
          console.log(error);
@@ -174,6 +144,7 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
       }
    };
 
+   //thumbnail change method
    const handleThumbnailChange = (
       event: React.ChangeEvent<HTMLInputElement>
    ) => {
@@ -188,6 +159,7 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
       }
    };
 
+   //imageOfHome change method   
    const handleImagesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;
       console.log("Files Selected:", files);
@@ -214,6 +186,8 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
       }
    };
 
+
+
    return (
       <Card className="w-full max-w-4xl my-4 mx-auto">
          <CardHeader>
@@ -223,110 +197,217 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
                <CardTitle>Add New Home</CardTitle>
             )}
             <CardDescription>
-               Enter the details of the new home listing
+               Enter the details of the House
             </CardDescription>
          </CardHeader>
          <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                <div className="space-y-4">
-                  <div>
-                     <Label htmlFor="thumbnail" className="block mb-2">
-                        Thumbnail
-                     </Label>
-                     <div className="flex items-center justify-center w-full">
-                        <label
-                           htmlFor="thumbnail"
-                           className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                        >
-                           {thumbnailPreview ? (
-                              <img
-                                 src={typeof HomeData?.thumbnail === 'string' ? HomeData?.thumbnail : thumbnailPreview}
-                                 alt="Thumbnail preview"
-                                 className="w-full h-full object-cover rounded-lg"
-                              />
-                           ) : (
-                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                 <ImageIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
-                                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                    <span className="font-semibold">
-                                       Click to upload
-                                    </span>{" "}
-                                    or drag and drop
-                                 </p>
-                                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    PNG, JPG or GIF (MAX. 800x400px)
-                                 </p>
+                  {HomeData && (
+                     <form className="    ">
+                        <div>
+                           <Label htmlFor="thumbnail" className="block mb-2">
+                              Thumbnail
+                           </Label> 
+                           <div className="flex items-center justify-center w-full">
+                              <label
+                                 htmlFor="thumbnail"
+                                 className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                              >
+                                 {thumbnailPreview ? (
+                                    <img
+                                       src={
+                                          thumbnailPreview
+                                       }
+                                       alt="Thumbnail preview"
+                                       className="w-full h-full object-cover rounded-lg"
+                                    />
+                                 ) : (
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                       <ImageIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                          <span className="font-semibold">
+                                             Click to upload
+                                          </span>{" "}
+                                          or drag and drop
+                                       </p>
+                                       <p className="text-xs text-gray-500 dark:text-gray-400">
+                                          PNG, JPG or GIF (MAX. 800x400px)
+                                       </p>
+                                    </div>
+                                 )}
+                                 <Input
+                                    id="thumbnail"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleThumbnailChange}
+                                 />
+                              </label>
+                           </div>
+                        </div>
+
+                        <div>
+                           <Label
+                              htmlFor="imagesOfHome"
+                              className="block mb-2 pt-2"
+                           >
+                              Images of Home
+                           </Label>
+                           <div className="flex items-center justify-center w-full">
+                              <label
+                                 htmlFor="imagesOfHome"
+                                 className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                              >
+                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                       <span className="font-semibold">
+                                          Click to upload
+                                       </span>{" "}
+                                       or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                       PNG, JPG or GIF (MAX. 800x400px)
+                                    </p>
+                                 </div>
+                                 <Input
+                                    id="imagesOfHome"
+                                    type="file"
+                                    accept="image/**"
+                                    multiple
+                                    className="hidden"
+                                    onChange={handleImagesChange}
+                                 />
+                              </label>
+                           </div>
+                           {(imagesPreview.length > 0 ||
+                              (HomeData?.imagesOfHome &&
+                                 HomeData.imagesOfHome.length > 0)) && (
+                                 <div className="mt-4 grid grid-cols-3 gap-4">
+                                    {HomeData?.imagesOfHome
+                                       ? HomeData.imagesOfHome.map(
+                                          (preview, index) => (
+                                             <img
+                                                key={index}
+                                                src={
+                                                   typeof preview === "string"
+                                                      ? preview
+                                                      : URL.createObjectURL(
+                                                         preview
+                                                      )
+                                                }
+                                                alt={`Preview ${index + 1}`}
+                                                className="w-full h-24 object-cover rounded-md"
+                                             />
+                                          )
+                                       )
+                                       : imagesPreview.map((preview, index) => (
+                                          <img
+                                             key={index}
+                                             src={preview}
+                                             alt={`Preview ${index + 1}`}
+                                             className="w-full h-24 object-cover rounded-md"
+                                          />
+                                       ))}
+                                 </div>
+                              )}
+                        </div>
+                     </form>
+                  )}
+
+                  {/* second form tag */}
+                  {!HomeData && (
+                     <form action="">
+                        <div>
+                           <Label htmlFor="thumbnail" className="block mb-2">
+                              Thumbnail
+                           </Label>
+                           <div className="flex items-center justify-center w-full">
+                              <label
+                                 htmlFor="thumbnail"
+                                 className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                              >
+                                 {thumbnailPreview ? (
+                                    <img
+                                       src={thumbnailPreview}
+                                       alt="Thumbnail preview"
+                                       className="w-full h-full object-cover rounded-lg"
+                                    />
+                                 ) : (
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                       <ImageIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                          <span className="font-semibold">
+                                             Click to upload
+                                          </span>{" "}
+                                          or drag and drop
+                                       </p>
+                                       <p className="text-xs text-gray-500 dark:text-gray-400">
+                                          PNG, JPG or GIF (MAX. 800x400px)
+                                       </p>
+                                    </div>
+                                 )}
+                                 <Input
+                                    id="thumbnail"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleThumbnailChange}
+                                 />
+                              </label>
+                           </div>
+                        </div>
+
+                        <div>
+                           <Label
+                              htmlFor="imagesOfHome"
+                              className="block mb-2 pt-2"
+                           >
+                              Images of Home
+                           </Label>
+                           <div className="flex items-center justify-center w-full">
+                              <label
+                                 htmlFor="imagesOfHome"
+                                 className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                              >
+                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                       <span className="font-semibold">
+                                          Click to upload
+                                       </span>{" "}
+                                       or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                       PNG, JPG or GIF (MAX. 800x400px)
+                                    </p>
+                                 </div>
+                                 <Input
+                                    id="imagesOfHome"
+                                    type="file"
+                                    accept="image/**"
+                                    multiple
+                                    className="hidden"
+                                    onChange={handleImagesChange}
+                                 />
+                              </label>
+                           </div>
+                           {imagesPreview.length > 0 && (
+                              <div className="mt-4 grid grid-cols-3 gap-4">
+                                 {imagesPreview.map((preview, index) => (
+                                    <img
+                                       key={index}
+                                       src={preview}
+                                       alt={`Preview ${index + 1}`}
+                                       className="w-full h-24 object-cover rounded-md"
+                                    />
+                                 ))}
                               </div>
                            )}
-                           <Input
-                              id="thumbnail"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleThumbnailChange}
-                           />
-                        </label>
-                     </div>
-                  </div>
-
-                  <div>
-                     <Label htmlFor="imagesOfHome" className="block mb-2">
-                        Images of Home
-                     </Label>
-                     <div className="flex items-center justify-center w-full">
-                        <label
-                           htmlFor="imagesOfHome"
-                           className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                        >
-                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                              <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
-                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                 <span className="font-semibold">
-                                    Click to upload
-                                 </span>{" "}
-                                 or drag and drop
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                 PNG, JPG or GIF (MAX. 800x400px)
-                              </p>
-                           </div>
-                           <Input
-                              id="imagesOfHome"
-                              type="file"
-                              accept="image/**"
-                              multiple
-                              className="hidden"
-                              onChange={handleImagesChange}
-                           />
-                        </label>
-                     </div>
-                     {(imagesPreview.length > 0 || (HomeData?.imagesOfHome && HomeData.imagesOfHome.length > 0)) && (
-                        <div className="mt-4 grid grid-cols-3 gap-4">
-                           {HomeData?.imagesOfHome ?
-                              HomeData.imagesOfHome.map((preview, index) => (
-                                 <img
-                                    key={index}
-                                    src={typeof preview === "string"
-                                       ? preview
-                                       : URL.createObjectURL(
-                                          preview
-                                       )}
-                                    alt={`Preview ${index + 1}`}
-                                    className="w-full h-24 object-cover rounded-md"
-                                 />
-                              )) :
-                              imagesPreview.map((preview, index) => (
-                                 <img
-                                    key={index}
-                                    src={preview}
-                                    alt={`Preview ${index + 1}`}
-                                    className="w-full h-24 object-cover rounded-md"
-                                 />
-                              ))
-                           }
                         </div>
-                     )}
-                  </div>
+                     </form>
+                  )}
 
                   <Separator />
 
