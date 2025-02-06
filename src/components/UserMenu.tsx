@@ -46,7 +46,7 @@ function UserMenu({ user, className }: UserMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
             <Button variant="ghost" className={`relative h-8 w-8 rounded-full ${className || ''}`}>
-          <Avatar className="h-11 w-9">
+          <Avatar className="h-11 w-11">
             <AvatarImage src={user.avatar} alt={user.name} />
             <AvatarFallback>{user.name}</AvatarFallback>
           </Avatar>
@@ -67,7 +67,7 @@ function UserMenu({ user, className }: UserMenuProps) {
         <DropdownMenuItem onClick={toggleTheme}>
                <>
                   <User2 className="mr-2 h-4 w-4" />
-                  <span>Your Profile</span>
+                  <Link href={`/profile/@${user.name}`} >Your Profile</Link>
                </>
         </DropdownMenuItem>
         <DropdownMenuItem>

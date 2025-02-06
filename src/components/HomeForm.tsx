@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, Form } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { addOwnerNewHome, updateHouseImage, UpdateImage, updateOneHomeDetails } from "@/lib/api/owner.home";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import {  useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
    id: z.string().uuid().optional(),
@@ -122,12 +122,20 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
                }
                toast.success("Images Are Update Successfully")
             }
-
-            const updateData = await updateOneHomeDetails(data);
+            const formDataUpdate = new FormData()
+            for (const [key, value] of Object.entries(data)) {
+               if (value !== null && value !== undefined) {
+                  formDataUpdate.append(key, String(value));
+               }
+            }
+            const updateData = await updateOneHomeDetails(formDataUpdate as unknown as HomeFormData);
             if (!updateData) {
                toast.error("Data Not Update Try Again")
             }
-            toast.success("Data Update Successfully")
+            else if(updateData){
+               toast.success("Data Update Successfully")
+               return router.push(`/v2/home/${id}`)
+            }
 
          } else {
 
@@ -163,7 +171,7 @@ const AddHomeForm: React.FC<HomeFormProps> = ({ HomeData }) => {
                formData as unknown as HomeFormData
             );
             console.log(result);
-            if(result){
+            if (result) {
                return router.push(`/v2/home/${result?.id}`)
             }
 

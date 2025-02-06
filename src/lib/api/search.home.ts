@@ -7,7 +7,7 @@ const config = {
     withCredentials: true,
  };
 
-export async function searchHome(searchLocation:string){
+export async function searchHomeMethod(searchLocation:string){
     try {
             const searchHomeResult = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/search?q=${searchLocation}`,config);
             if(!searchHomeResult){

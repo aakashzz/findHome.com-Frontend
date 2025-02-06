@@ -1,11 +1,13 @@
 "use client";
-import React, { useEffect, useState,useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserMenu from "./UserMenu";
 import { useCustomSelector, useCustomDispatch } from "@/store/hooks";
 import { UserModel, fetchCurrentUser, logout } from "../store/slice/user.slice";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 interface NavbarType {
    name: string;
@@ -26,6 +28,7 @@ export interface UserMenuProps {
 const Navbar: React.FC = () => {
    const [isOpen, setIsOpen] = useState<boolean>(false);
    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+   const router = useRouter()
    const dispatch = useCustomDispatch();
 
    const { status, error, data } = useCustomSelector((state) => state.getUser);
@@ -34,14 +37,15 @@ const Navbar: React.FC = () => {
       dispatch(fetchCurrentUser());
    }
 
-  
+
    useEffect(() => {
-      if (!data && status !== "success") {
+      console.log("Data", data)
+      if (status !== "success") {
          setIsLoggedIn(false);
+         // router.push("/login")      
       }
       setIsLoggedIn(true);
-   }, [isLoggedIn,data]);
-   // setIsLoggedIn(true)
+   }, [isLoggedIn, data]);
    const navbarOption: Array<NavbarType> = [
       {
          name: "Home",
@@ -137,7 +141,7 @@ const Navbar: React.FC = () => {
                                  className="transition-all hover:scale-105"
                                  variant="default"
                               >
-                                 Sign Up  
+                                 Sign Up
                               </Button>
                            </Link>
                            <Link href="/login">

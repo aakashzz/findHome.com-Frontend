@@ -1,4 +1,3 @@
-"use client"
 import React from "react";
 import { motion } from "framer-motion";
 import { Star, MapPin, BedDouble, Home } from "lucide-react";
@@ -16,8 +15,7 @@ type Props = {
    rent_price: string;
    stats: string;
 };
-
-function SearchResult({
+ function SearchResult({
    id,
    thumbnail,
    propertyType,
@@ -40,12 +38,12 @@ function SearchResult({
          >
             <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row">
                <div className="sm:w-1/3 cursor-pointer">
-               <Link href={`/v2/home/${id}`}>
-                  <img
-                     src={thumbnail}
-                     alt={propertyType}
-                     className="w-full h-48 sm:h-full object-cover"
-                  />
+                  <Link href={`/v2/home/${id}`}>
+                     <img
+                        src={thumbnail}
+                        alt={propertyType}
+                        className="w-full h-48 sm:h-full object-cover"
+                     />
                   </Link>
                </div>
                <div className="p-4 sm:w-2/3 flex flex-col justify-between">

@@ -30,7 +30,7 @@ function VerifyEmail() {
       verifyEmail();
    }, [tokenValue]);
       if (verificationState === "verified") {
-         return redirect("/");
+         return redirect("/update-profile");
       }
 
    return (

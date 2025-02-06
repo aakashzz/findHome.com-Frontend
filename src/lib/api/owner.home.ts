@@ -31,7 +31,7 @@ export async function addOwnerNewHome(data: HomeFormData) {
 export async function updateOneHomeDetails(data: HomeFormData) {
    try {
       console.log("First Look Of Data",data)
-      const sendedToUpdateHome = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/home/update`,data,{headers:{"Content-Type":"application/json"},withCredentials:true});
+      const sendedToUpdateHome = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/home/update`,data,{headers: {"Content-Type":"application/json"},withCredentials:true});
       console.log("Second Look Of Data",sendedToUpdateHome)
       if(!sendedToUpdateHome){
          return "Something Have Issue An Api Not Running ";

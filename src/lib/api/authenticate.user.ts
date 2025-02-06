@@ -57,7 +57,7 @@ export async function loginUserAccount(data: LoginForm) {
       const loginUserAccountDetails = await axios.post(
          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/user/login`,
          data,
-         config
+         config,
       );
       if (!loginUserAccountDetails) {
          console.log(loginUserAccountDetails);
