@@ -1,14 +1,12 @@
+'use client'
+import React from "react"
 import Loading from "@/components/Loading";
-// import { useCustomSelector } from "@/store/hooks";
 import { toast } from "sonner";
 import RelatedHouses from "@/components/RelatedHouse";
 import HouseDetails from "./HouseDetails";
+import { useParams, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
-interface PageProps {
-   params: {
-      id: string;
-   };
-}
 const relatedHouses: any = [
    {
       id: "1",
@@ -35,48 +33,13 @@ const relatedHouses: any = [
       BHK: 1,
    },
 ];
-const HouseDetail = async ({params}: {params: Promise<{ id: string }>}) => {
-   const id  = (await params).id
-
-   //TODO: confirmBooking Method RE add and userRole setup 
-
-   // const confirmBookingMethod = async (event: React.FormEvent) => {
-   //    event.preventDefault();
-
-   //    try {
-         // if(userRole === 'pending'){
-         //    console.log("Redirected")
-         //    router.push("/login")
-         // }
-   //       const userId = houseDetails?.user?.id;
-   //        if (!houseDetails?.id || !userId) {
-   //          return "Required Fields Not Collected";
-   //       }
-   //       const data = {
-   //          homeId: houseDetails.id,
-   //          customerId: userId,
-   //          booking_date: Date.now(),
-   //       };
-   //       const result = await confirmBookingHouse(data);
-   //       if (!result) {
-   //          return <p>"Result Not Showing Check"</p>;
-   //       }
-   //       if (result.id) {
-   //          return router.push(`/confirm-booking/${result.id}`);
-   //       }
-   //       toast.message(result)
-   //    } catch (error) {
-   //       console.error(error);
-   //    }
-   // };
-
-
-
+const HouseDetail =  () => {
+   const {id} = useParams<{ id: string }>()
    return (
-      <div className="container mx-auto min-w-full px-4 py-4 bg-gray-50 min-h-screen">
+      <div className="container mx-auto  px-4 py-4 bg-gray-50 min-h-screen">
          {id ? (
             <>
-               <HouseDetails id={id as string} userRole={"Owner"} />
+               <HouseDetails id={id}  />
             </>
          ) : (
             <div className="min-h-screen flex justify-center ">

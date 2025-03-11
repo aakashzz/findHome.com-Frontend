@@ -1,4 +1,3 @@
-"use client"
 import AddHomeForm from '@/components/HomeForm'
 import React from 'react'
 

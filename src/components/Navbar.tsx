@@ -4,9 +4,10 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserMenu from "./UserMenu";
 import { useCustomSelector, useCustomDispatch } from "@/store/hooks";
-import { UserModel, fetchCurrentUser, logout } from "../store/slice/user.slice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getCurrentUserAccount } from "@/lib/api/authenticate.user";
+import { login, logout } from "@/store/slice/user.slice";
 
 
 interface NavbarType {
@@ -28,24 +29,32 @@ export interface UserMenuProps {
 const Navbar: React.FC = () => {
    const [isOpen, setIsOpen] = useState<boolean>(false);
    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-   const router = useRouter()
+   const router = useRouter();
    const dispatch = useCustomDispatch();
-
    const { status, error, data } = useCustomSelector((state) => state.getUser);
-
-   if (!data) {
-      dispatch(fetchCurrentUser());
-   }
-
-
-   useEffect(() => {
-      console.log("Data", data)
-      if (status !== "success") {
-         setIsLoggedIn(false);
-         // router.push("/login")      
+   
+   useLayoutEffect(() => {
+      const fetchUser = async () => {
+         try {
+            const userData = await getCurrentUserAccount();
+            if (userData) {
+               dispatch(login(userData));
+               setIsLoggedIn(true);
+            } else {
+               dispatch(logout());
+               setIsLoggedIn(false);
+            }
+         } catch (err) {
+            console.error("Error fetching user", err);
+            setIsLoggedIn(false);
+         }
+      };
+   
+      if (!isLoggedIn) {  // ✅ Prevents unnecessary re-renders
+         fetchUser();
       }
-      setIsLoggedIn(true);
-   }, [isLoggedIn, data]);
+   }, []);
+   
    const navbarOption: Array<NavbarType> = [
       {
          name: "Home",
@@ -125,12 +134,12 @@ const Navbar: React.FC = () => {
 
                      {/* Auth section */}
                      {status === "success" && data && isLoggedIn ? (
-                        <div className="flex items-center gap-x-3">
+                        <div className="flex items-center gap-x-3 ">
                            <UserMenu
                               user={userRole}
                               className="transition-transform hover:scale-105"
                            />
-                           <span className="text-base font-medium text-primary">
+                           <span className="text-base font-semibold text-primary">
                               {userRole.name}
                            </span>
                         </div>

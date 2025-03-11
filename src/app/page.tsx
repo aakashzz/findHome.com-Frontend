@@ -3,12 +3,25 @@ import HomeCard from "@/components/HomeCard";
 import TrendingProperties from "@/components/TreadingProperties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getCurrentUserAccount } from "@/lib/api/authenticate.user";
+import { useCustomDispatch } from "@/store/hooks";
+import { login, logout } from "@/store/slice/user.slice";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 export default function Home() {
+  const dispatch = useCustomDispatch();
   const [searchText,setSearchText] = useState<string>("")
+  useLayoutEffect(()=>{
+    getCurrentUserAccount().then((userData)=>{
+      if(userData){
+        dispatch(login(userData))
+      }else{
+        dispatch(logout())
+      }
+    })
+  },[])
     const topRatedHomes = [
         {
           id: 1,
@@ -37,7 +50,7 @@ export default function Home() {
       ]
     
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-be-vietnam-pro">
+    <div className="min-h-screen dark:bg-gray-900 font-be-vietnam-pro">
       
       <header className="relative bg-cover bg-center h-[550px]" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1721149122657-7b5440f39160?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}>
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/80"></div>

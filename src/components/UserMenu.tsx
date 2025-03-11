@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Moon, Sun, User, Home, LogOut, User2 } from "lucide-react";
+import { Moon, Sun, User, Home, LogOut, User2, Book } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +52,7 @@ function UserMenu({ user, className }: UserMenuProps) {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="start" forceMount>
+      <DropdownMenuContent className="w-56 " align="center" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
@@ -67,19 +67,19 @@ function UserMenu({ user, className }: UserMenuProps) {
         <DropdownMenuItem onClick={toggleTheme}>
                <>
                   <User2 className="mr-2 h-4 w-4" />
-                  <Link href={`/profile/@${user.name}`} >Your Profile</Link>
+                  <Link href={`/profile/@${user.name}`}>Your Profile</Link>
                </>
         </DropdownMenuItem>
         <DropdownMenuItem>
                {user.role === "Owner" ? (
             <>
               <Home className="mr-2 h-4 w-4" />
-              <Link href={`/owner/list-home`}>My Properties</Link>
+              <Link href={`/owner/dashboard`}>Dashboard</Link>
             </>
           ) : (
             <>
-              <User className="mr-2 h-4 w-4" />
-              <span>My Profile</span>
+              <Book className="mr-2 h-4 w-4" />
+              <Link href={`/booking`}>Your Booking</Link>
             </>
           )}
         </DropdownMenuItem>

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 
 export default function BarLoader() {
-   return <div className="flex justify-center items-center">
+   return <div className="h-screen w-full flex justify-center items-center">
    <motion.div
      className="w-16 h-16 border-4 border-teal-200 rounded-full shadow-md"
      animate={{

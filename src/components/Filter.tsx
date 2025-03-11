@@ -26,7 +26,7 @@ const Filters = () => {
           min={0}
           max={10000}
           step={100}
-  
+
         />
         <div className="flex justify-between mt-2">
           <span>${8}</span>

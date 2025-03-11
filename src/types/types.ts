@@ -1,6 +1,6 @@
 import {z} from "zod"
 
-const userSchema = z.object({
+export const userSchema = z.object({
     id: z.string().uuid().nullable(),
     name: z.string(),
     email: z.string().email(),
@@ -12,7 +12,7 @@ const userSchema = z.object({
     address:z.string(),
 })
 
-const houseSchema =  z.object({
+export const houseSchema =  z.object({
     id: z.string(),
     thumbnail: z.string() ,
     imagesOfHome: z.array(z.string()).optional(),

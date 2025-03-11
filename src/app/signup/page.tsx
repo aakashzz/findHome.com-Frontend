@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeClosed } from "lucide-react";
 import {
    Card,
    CardHeader,
@@ -31,6 +32,7 @@ export type SignupForm = z.infer<typeof SignupFormSchema>;
 
 function SignupForm() {
    const router = useRouter();
+   const [view, setView] = useState<Boolean>(true)
    const {
       handleSubmit,
       register,
@@ -39,13 +41,18 @@ function SignupForm() {
    } = useForm<SignupForm>({
       resolver: zodResolver(SignupFormSchema),
    });
+
+   function viewMethod(e: React.FormEvent) {
+      e.preventDefault();
+      setView((e) => !e)
+   }
    const onSubmit: SubmitHandler<SignupForm> = async (value: SignupForm) => {
-      const {data,success,error} = SignupFormSchema.safeParse(value);
+      const { data, success, error } = SignupFormSchema.safeParse(value);
       if (!success) {
          console.error(error.errors);
       }
       const result = await singUpUserAccount(data!);
-      if(!result){
+      if (!result) {
          return "Sorry Api Not Hit Please Check Now"
       }
 
@@ -53,7 +60,7 @@ function SignupForm() {
       router.push("/notify-verify-email")
       return result;
    };
-   
+
    return (
       <div className="container mx-auto px-4 py-8">
          <Card className="max-w-md mx-auto">
@@ -102,6 +109,33 @@ function SignupForm() {
                         </p>
                      )}
                   </div>
+
+                  <div className="space-y-2">
+                     <Label htmlFor="password">Password</Label>
+                     <span className="flex justify-between items-center">
+
+                        <Input
+                           id="password"
+                           type={view ? "password" : 'text'}
+                           required
+                           {...register("password", {
+                              required: true,
+                           })}
+                           className="inline-block"
+                        />
+                        <button onClick={viewMethod}>
+                           {
+                              view ? (<EyeClosed className="ml-2 h-5 inline " />) : (<Eye className="ml-2 h-5 inline" />)
+                           }
+                        </button>
+
+                     </span>
+                     {errors.password?.message && (
+                        <p className="text-sm font-inter text-red-600">
+                           {errors.password?.message}
+                        </p>
+                     )}
+                  </div>
                   <div className="">
                      <Label htmlFor="role">Category</Label>
                      <div className="flex items-center pt-2">
@@ -140,21 +174,6 @@ function SignupForm() {
                            }}
                         />
                      </div>
-                  </div>
-                  <div className="space-y-2">
-                     <Label htmlFor="password">Password</Label>
-                     <Input
-                        id="password"
-                        type="password"
-                        {...register("password", {
-                           required: true,
-                        })}
-                     />
-                     {errors.password?.message && (
-                        <p className="text-sm font-inter text-red-600">
-                           {errors.password?.message}
-                        </p>
-                     )}
                   </div>
 
                   <Button type="submit" className="w-full mt-6">

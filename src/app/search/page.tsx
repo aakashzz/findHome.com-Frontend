@@ -1,17 +1,15 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
 import { Star, MapPin, BedDouble, Home, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import SearchBar from "@/components/SearchBar";
 import Filters from "@/components/Filter";
 import SearchResult from "./SearchResult";
 import { useSearchParams } from "next/navigation";
 import { searchHomeMethod } from "@/lib/api/search.home";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BarLoader from "@/components/Loading";
+import dynamic from "next/dynamic";
 // import { Spinner } from "@/components/ui/spinner";
 
 interface Property {
@@ -26,7 +24,9 @@ interface Property {
    rent_price: string;
    stats: string;
 }
-
+const HomeCard = dynamic(() => import('@/components/HomeCard'), {
+   loading: () => <p>Loading...</p> // Optional loading fallback while the component loads
+ });
 const SearchResults: React.FC = () => {
    const searchTextTerm = useSearchParams().get("q");
    const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -68,10 +68,10 @@ const SearchResults: React.FC = () => {
    };
 
    return (
-      <div className="flex ">
-         <div className="p-2 hidden lg:block">
+      <div className="flex justify-center ">
+         {/* <div className="p-2 hidden lg:block">
             <Filters />
-         </div>
+         </div> */}
          <div className="container w-full px-4 py-8 bg-gray-50">
             <form onSubmit={handleSearch} className="mb-8 flex justify-center">
                <div className="flex w-full max-w-sm items-center space-x-2">
@@ -80,7 +80,7 @@ const SearchResults: React.FC = () => {
                      type="text"
                      placeholder="Enter location..."
                      defaultValue={searchTextTerm || ""}
-                     className="flex-grow"
+                     className="flex-grow w-full"
                   />
                   <Button type="submit" disabled={loading}>
                      {loading ? (

@@ -3,16 +3,18 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader2 } from "lucide-react";
 import Home from "./page";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { verifyUserEmailAccount } from "@/lib/api/authenticate.user";
+import { toast } from "sonner";
 
 function VerifyEmail() {
-   const router = useSearchParams();
+   const params = useSearchParams();
+   const router = useRouter()
    const [verificationState, setVerificationState] = useState<
       "processing" | "success" | "verified"
    >("processing");
 
-   const tokenValue = router.get("token");
+   const tokenValue = params.get("token");
    if (!tokenValue) {
       return "Token Value Not Get";
    }
@@ -20,18 +22,28 @@ function VerifyEmail() {
 
    useEffect(() => {
       async function verifyEmail() {
-         const verifyAndLoginMethod = await verifyUserEmailAccount(tokenValue!);
-         setVerificationState("success");
-         if (!verifyAndLoginMethod) {
-            return "Not Verify Email Your Verification Email Token Expire!";
+         //TODO: Try to make perfect ui condition rendering and showing perfectly oraganise work
+         try {
+            const verifyAndLoginMethod = await verifyUserEmailAccount(tokenValue!);
+            setVerificationState("success")
+            if (!verifyAndLoginMethod) {
+               return "Not Verify Email Your Verification Email Token Expire!";
+            }
+            if(verificationState === "verified"){
+               return redirect("/")
+            }
+         } catch (error) {
+            console.error(error)
+            return error
+         } finally{
+            setVerificationState("verified");
+            if(verificationState === "verified"){
+               return redirect("/")
+            }
          }
-           setVerificationState("verified");
       }
       verifyEmail();
    }, [tokenValue]);
-      if (verificationState === "verified") {
-         return redirect("/update-profile");
-      }
 
    return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background">

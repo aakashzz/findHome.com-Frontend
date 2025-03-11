@@ -30,6 +30,7 @@ export async function singUpUserAccount(data: SignupForm) {
 
 export async function verifyUserEmailAccount(token: string) {
    try {
+      console.log("Token", token)
       const verifyEmailDetails = await axios.get(
          `${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}/user/verify-email?token=${token}`,
          config

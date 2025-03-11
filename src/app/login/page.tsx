@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { EventHandler, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Eye, EyeClosed } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
    Card,
@@ -25,6 +26,8 @@ const LoginFormSchema = z.object({
 export type LoginForm = z.infer<typeof LoginFormSchema>;
 
 function page() {
+   const [error, setError] = useState<String>()
+   const [view, setView] = useState<Boolean>(true)
    const {
       handleSubmit,
       register,
@@ -33,6 +36,10 @@ function page() {
       resolver: zodResolver(LoginFormSchema),
    });
    const router = useRouter();
+   function viewMethod(e: React.FormEvent) {
+      e.preventDefault();
+      setView((e)=>!e)
+   }
    const onSubmit: SubmitHandler<LoginForm> = async (value: LoginForm) => {
       try {
          const { success, data, error } = LoginFormSchema.safeParse(value);
@@ -41,7 +48,8 @@ function page() {
          }
          const result = await loginUserAccount(data!);
          console.log(result);
-         if (result.code === "ERR_NETWORK" || result.status >= 400) {
+         if (result.status >= 400) {
+            setError(result?.response?.data?.error[0]?.message)
             return "Sorry Api Not Hit Please Check Now";
          }
          if (result) {
@@ -53,7 +61,7 @@ function page() {
          return "Sorry Api Not Hit Please Check Now";
       }
    };
- 
+
 
    return (
       <div className="container mx-auto px-4 py-8">
@@ -70,10 +78,14 @@ function page() {
                   Login
                </h3>
             </CardHeader>
+            {
+               error && <p className="text-center font-beVietnamPro font-bold text-red-500">{error}</p>
+            }
             <CardContent>
                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="space-y-2">
                      <Label htmlFor="email">Email</Label>
+
                      <Input
                         id="email"
                         type="email"
@@ -84,23 +96,33 @@ function page() {
                      />
                      {errors.email?.message && (
                         <p className="text-sm font-inter text-red-600">
-                           {errors.email?.message}
+                           {errors.email?.message || error}
                         </p>
                      )}
                   </div>
                   <div className="space-y-2">
                      <Label htmlFor="password">Password</Label>
-                     <Input
-                        id="password"
-                        type="password"
-                        required
-                        {...register("password", {
-                           required: true,
-                        })}
-                     />
+                     <span className="flex justify-between items-center">
+
+                        <Input
+                           id="password"
+                           type={view ? "password" : 'text'}
+                           required
+                           {...register("password", {
+                              required: true,
+                           })}
+                           className="inline-block"
+                        />
+                        <button onClick={viewMethod}>
+                           {
+                              view ? (<EyeClosed className="ml-2 h-5 inline " />) : (<Eye className="ml-2 h-5 inline" />)
+                           }
+                        </button>
+
+                     </span>
                      {errors.password?.message && (
                         <p className="text-sm font-inter text-red-600">
-                           {errors.password?.message}
+                           {errors.password?.message || error}
                         </p>
                      )}
                   </div>
